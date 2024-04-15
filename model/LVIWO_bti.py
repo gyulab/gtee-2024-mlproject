@@ -281,7 +281,7 @@ verilog_code = "real "
 verilog_code += ", ".join([f"h1_{i}" for i in range(n1)]) + ";\n"
 
 for i in range(n1):
-    inputs = ["Vgs", "Vds", "Lg", "ts", "temp"]
+    inputs = ["Vgs", "Vds", "Vov", "ts", "temp"]
     inputs = ["*".join([str(weights_1[i][j]), inp]) for j, inp in enumerate(inputs)]
     inputs = "+".join(inputs)
     inputs = "+".join([inputs, str(bias_1[i])])
@@ -325,12 +325,14 @@ module IWO_verilogA (d, g, s);
 	parameter normI = {};
 	parameter MinO = 8.15e-15 ;
 	parameter normO =33613445378151.26;
+ 	parameter MinLg = 0.05 ;
+	parameter normLg = 25.000000000000004 ;
 	parameter Mintemp = {};
 	parameter normtemp = {};
 	parameter Mints = {};
 	parameter normts = {};
 
-	real Vg, Vd, Vs, Vgs, Vds, Id, Cgg, Cgsd, Vgd;
+	real Vg, Vd, Vs, Vgs, Vds, Id, Cgg, Cgsd, Vgd, Lg;
 	real Vgsraw, Vgdraw, dir;
 	real Vov, ts, temp; // BTI variable: Vov, stress time, temperature
 
@@ -348,7 +350,7 @@ else begin
 	Vgs = ((Vg-Vd) - MinVg) * normVg ;
     dir = -1 ;
 end
-
+	Lg = (L - MinLg)*normLg ;
 	Vds = (abs(Vd-Vs) - MinVd) * normVd ;
 	Vov = (vov - Minvov)*normvov ;
 	temp = (Temp - Mintemp)*normtemp ;
