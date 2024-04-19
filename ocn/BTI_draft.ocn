@@ -1,0 +1,37 @@
+simulator('spectre)
+
+procedure(runSimulation(x, y, bti)
+
+	design(  "/nethome/gjeong35/simulation/2TDRAM_128_TEST/spectre/schematic/netlist/netlist")
+	resultsDir( "/nethome/gjeong35/simulation/2TDRAM_128_TEST/spectre/schematic" )
+	modelFile(
+		'("/nethome/gjeong35/lib3400/Modelfile_180n.scs" "")
+	)
+	analysis('dc ?saveOppoint t  )
+	analysis('tran ?stop "1m"  ?errpreset "conservative"  )
+	envOption(
+		'analysisOrder  list("tran" "dc")
+		) 
+  instParams( "I9" ?params(list("W" 0.1 "L" 0.05 "Temp" 25 "StressTime" ts)))
+  run()
+
+  let( (senseMargin)
+    senseMargin = measure('dc "v(out)" ?from 0 ?to 1.2 ?method 'average)
+    println("Sense margin for cell [" x "," y "] under BTI condition " bti ": " senseMargin)
+    senseMargin
+  )
+)
+
+procedure(calculateBTI(ts, i, j)
+  (+ ts 1) ; Just adds 1 to ts
+)
+
+; Main loop iterating over the 128x128 array
+for(i from 0 to 127)
+  for(j from 0 to 127)
+    let( (bti_condition)
+      bti_condition = calculateBTI(ts, i, j)
+      runSimulation(i, j, bti_condition)
+    )
+
+exit()
