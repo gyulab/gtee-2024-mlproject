@@ -33,7 +33,7 @@ module IWO_verliogA(d, g, s);
 	electrical d, g, s;
 
 	//***** parameters L and W ******//
-	parameter real W = 0.1; //set on cadence
+	parameter real W = 0.2; //set on cadence
 	parameter real L = 0.05; //set on cadence
 	parameter real Temp = 273.15; //set on cadence as variable, e.g., temperature
 	parameter real StressTime = 0; //set on cadence as variable, e.g., stresstime
