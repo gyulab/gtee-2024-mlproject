@@ -48,7 +48,7 @@ module IWO_verliogA(d, g, s);
 	parameter MinO = 8.15e-15 ;
 	parameter normO =33613445378151.26;
 	parameter Mintemp = 258.15;
-	parameter normtemp = 0.01;
+	parameter normtemp = 0.00279213;
 	parameter Mints = 0;
 	parameter normts = 0.001;
 
