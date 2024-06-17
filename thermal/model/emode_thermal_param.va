@@ -1,21 +1,46 @@
+// VerilogA for ML_HV, ML_HV_emode, veriloga
 
-module IWO_verilogA (d, g, s);
+`include "constants.vams"
+`include "disciplines.vams"
+
+module ML_HV_dmode_thermal(d, g, s);
+
+
 inout d, g, s;
 electrical d, g, s;
 
 //****** Parameters L and W ********
-parameter real W = 0.25;
+parameter real W = 2;
 parameter real L = 0.6;
 parameter MinVg = -6.0 ;
 parameter normVg = 0.05555555555555555 ;
-parameter MinVd = 0.05 ;
-parameter normVd = 0.08368200836820085 ;
+parameter MinVd = -0.15 ;
+parameter normVd = 0.0823 ;
 parameter MinTemperature = 25 ;
 parameter normTemperature = 0.016666666666666666 ;
 parameter MinI = -14.614393726401689 ;
 parameter normI =0.0975145951626748;
 parameter vth =0;
 parameter real Temp = 25; //set on cadence as variable, 25, 55, 85 Celcius
+
+parameter MinVg_cgd = -6.0 ;
+parameter normVg_cgd = 0.05555555555555555 ;
+parameter MinVd_cgd = -6.0 ;
+parameter normVd_cgd = 0.05555555555555555 ;
+parameter MinLg_cgd = 0.6 ;
+parameter normLg_cgd = 0 ;
+parameter MinO_cgd = -13.926054483271312 ;
+parameter normO_cgd =1.4486107458852509 ;
+
+parameter MinVg_cgs = -6.0 ;
+parameter normVg_cgs = 0.05555555555555555 ;
+parameter MinVd_cgs = -6.0 ;
+parameter normVd_cgs = 0.05555555555555555 ;
+parameter MinLg_cgs = 0.6 ;
+parameter normLg_cgs = 0 ;
+parameter MinO_cgs = -13.08359343161434 ;
+parameter normO_cgs =2.886734269461609;
+
 
 real Vg, Vd, Vs, Vgs, Vds, Lg, Id, Cgg, Cgs,Cgd, Vgd, temp;
 real y, y_cgg, y_cgs, y_cgd, yvth;
@@ -25,6 +50,15 @@ real Lg_cgg, Lg_cgs, Lg_cgd;
 real Vgsraw, Vgdraw, dir;
 real Vdi, Vsi;
 
+real h1_0, h1_1, h1_2, h1_3, h1_4, h1_5, h1_6, h1_7, h1_8, h1_9, h1_10, h1_11, h1_12, h1_13, h1_14, h1_15, h1_16, h1_17, h1_18, h1_19, h1_20, h1_21, h1_22, h1_23, h1_24;
+real h2_0, h2_1, h2_2, h2_3, h2_4, h2_5, h2_6, h2_7, h2_8, h2_9, h2_10, h2_11, h2_12, h2_13, h2_14;
+real hcgg1_0, hcgg1_1, hcgg1_2, hcgg1_3, hcgg1_4, hcgg1_5, hcgg1_6, hcgg1_7, hcgg1_8, hcgg1_9, hcgg1_10, hcgg1_11, hcgg1_12, hcgg1_13, hcgg1_14, hcgg1_15, hcgg1_16, hcgg1_17, hcgg1_18, hcgg1_19, hcgg1_20, hcgg1_21, hcgg1_22, hcgg1_23, hcgg1_24;
+real hcgg2_0, hcgg2_1, hcgg2_2, hcgg2_3, hcgg2_4, hcgg2_5, hcgg2_6, hcgg2_7, hcgg2_8, hcgg2_9, hcgg2_10, hcgg2_11;
+real hcgs1_0, hcgs1_1, hcgs1_2, hcgs1_3, hcgs1_4, hcgs1_5, hcgs1_6, hcgs1_7, hcgs1_8, hcgs1_9, hcgs1_10, hcgs1_11, hcgs1_12, hcgs1_13, hcgs1_14, hcgs1_15, hcgs1_16, hcgs1_17, hcgs1_18, hcgs1_19, hcgs1_20, hcgs1_21, hcgs1_22, hcgs1_23, hcgs1_24;
+real hcgs2_0, hcgs2_1, hcgs2_2, hcgs2_3, hcgs2_4, hcgs2_5, hcgs2_6, hcgs2_7, hcgs2_8, hcgs2_9, hcgs2_10, hcgs2_11;
+real hcgd1_0, hcgd1_1, hcgd1_2, hcgd1_3, hcgd1_4, hcgd1_5, hcgd1_6, hcgd1_7, hcgd1_8, hcgd1_9, hcgd1_10, hcgd1_11, hcgd1_12, hcgd1_13, hcgd1_14, hcgd1_15, hcgd1_16, hcgd1_17, hcgd1_18, hcgd1_19, hcgd1_20, hcgd1_21, hcgd1_22, hcgd1_23, hcgd1_24;
+real hcgd2_0, hcgd2_1, hcgd2_2, hcgd2_3, hcgd2_4, hcgd2_5, hcgd2_6, hcgd2_7, hcgd2_8, hcgd2_9, hcgd2_10, hcgd2_11;
+real Qgd, Qgs;
 
 analog begin
 	Vg = V(g);
@@ -33,17 +67,16 @@ analog begin
     Vgsraw = Vg-Vs ;
     Vgdraw = Vg-Vd ;
 if (Vgsraw>=Vgdraw) begin
-	Vgs = ((Vg-Vs) - MinVg) * normVg ;
-    dir = 1 ;
+	Vgs = ((Vg-Vs) - MinVg - vth) * normVg ;
+	dir = 1 ;
 end
 else begin
-	Vgs = ((Vg-Vd) - MinVg) * normVg ;
-    dir = -1 ;
+	Vgs = ((Vg-Vd) - MinVg - vth) * normVg ;
+	dir = -1 ;
 end
+
 	Vds = (abs(Vd-Vs) - MinVd) * normVd ;
-    Temperature = (Temperature - MinTemperature) * normTemperature ;
-
-
+    temp = (Temp - MinTemperature) * normTemperature ;
 
 h1_0 = tanh(-0.28592426*Vgs+-0.06702367*Vds+-0.08783989*temp+0.0067680436);
 h1_1 = tanh(-1.6092799*Vgs+-0.12605947*Vds+-0.17968784*temp+0.54375905);
@@ -89,16 +122,20 @@ h2_14 = tanh(0.53777266*h1_0+0.22904433*h1_1+-0.3008821*h1_2+-1.9013842*h1_3+0.0
 y = 0.3092515*h2_0+-0.0039857416*h2_1+-0.04699469*h2_2+-0.0048941523*h2_3+0.35384405*h2_4+0.101601765*h2_5+0.0012679*h2_6+0.34616756*h2_7+0.4377402*h2_8+-0.38769147*h2_9+0.05957597*h2_10+0.4842403*h2_11+-0.3802203*h2_12+-0.2044264*h2_13+0.37577152*h2_14+0.0872803;
 
 
-Id = pow(10, (y/normI + MinI))*W;
-I(g, d) <+ Cgsd*ddt(Vg-Vd) ;
-I(g, s) <+ Cgsd*ddt(Vg-Vs) ;
+//Cgd = pow(10, (y_cgd/normO_cgd + MinO_cgd))*W/15; //traning width was 15um
+//Cgs = pow(10, (y_cgs/normO_cgs + MinO_cgs))*W/15;
+//Cgg = Cgd+Cgs;
 
-if (Vd >= Vs) begin
-	I(d, s) <+ dir*Id;
+Id = pow(10, (y/normI + MinI));
+//I(g, d) <+ Cgd*ddt(Vg-Vd) ;
+//I(g, s) <+ Cgs*ddt(Vg-Vs) ;
+
+if (Vgsraw >= Vgdraw) begin
+	I(d, s) <+ dir*Id*W;
 end
 
 else begin
-	I(d, s) <+ dir*Id;
+	I(d, s) <+ dir*Id*W;
 end
 
 end
