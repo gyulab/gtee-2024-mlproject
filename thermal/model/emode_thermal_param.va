@@ -4,18 +4,27 @@ inout d, g, s;
 electrical d, g, s;
 
 //****** Parameters L and W ********
-parameter real W = 0.1;
-parameter real Temperature = 25;
+parameter real W = 0.25;
+parameter real L = 0.6;
 parameter MinVg = -6.0 ;
 parameter normVg = 0.05555555555555555 ;
 parameter MinVd = 0.05 ;
 parameter normVd = 0.08368200836820085 ;
 parameter MinTemperature = 25 ;
 parameter normTemperature = 0.016666666666666666 ;
-parameter MinI = -10.748600281214967 ;
-parameter normI =0.15112898661371651;
-real Vg, Vd, Vs, Vgs, Vds, Lg, Id, Cgg, Cgsd, Vgd;
+parameter MinI = -14.614393726401689 ;
+parameter normI =0.0975145951626748;
+parameter vth =0;
+parameter real Temp = 25; //set on cadence as variable, 25, 55, 85 Celcius
+
+real Vg, Vd, Vs, Vgs, Vds, Lg, Id, Cgg, Cgs,Cgd, Vgd, temp;
+real y, y_cgg, y_cgs, y_cgd, yvth;
+real Vgs_cgg, Vgs_cgs, Vgs_cgd;
+real Vds_cgg, Vds_cgs, Vds_cgd;
+real Lg_cgg, Lg_cgs, Lg_cgd;
 real Vgsraw, Vgdraw, dir;
+real Vdi, Vsi;
+
 
 analog begin
 	Vg = V(g);
