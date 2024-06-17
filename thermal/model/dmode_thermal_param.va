@@ -3,8 +3,7 @@
 `include "constants.vams"
 `include "disciplines.vams"
 
-module ML_HV_emode_thermal(d, g, s);
-
+module ML_HV_dmode_thermal(d, g, s);
 
 inout d, g, s;
 electrical d, g, s;
