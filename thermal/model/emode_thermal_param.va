@@ -5,7 +5,6 @@
 
 module ML_HV_dmode_thermal(d, g, s);
 
-
 inout d, g, s;
 electrical d, g, s;
 
