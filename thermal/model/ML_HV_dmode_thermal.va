@@ -10,8 +10,8 @@ inout d, g, s;
 electrical d, g, s;
 
 //****** Parameters L and W ********
-parameter real W = 0.3;
-parameter real L = 0.3;
+parameter real W = 0.27;
+parameter real L = 0.27;
 parameter MinVg = -6.0 ;
 parameter normVg = 0.05555555555555555 ;
 parameter MinVd = -0.15 ;
