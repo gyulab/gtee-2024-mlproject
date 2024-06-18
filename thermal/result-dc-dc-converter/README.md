@@ -1,4 +1,4 @@
-# thermal-result-dc-dc-converter
+# thermal/result-dc-dc-converter
 
 - original-iv: Original HV Model on January which had W=3 and higher Id value compared to current measured data
 - original-simulation: DC-DC Simulation result of the original HV model
